@@ -1,17 +1,38 @@
-import React from 'react'
-import Background from '../components/Background'
-import Header from '../components/Header'
-import Paragraph from '../components/Paragraph'
-import Button from '../components/Button'
+import React, { useState, useEffect } from 'react';
+import Background from '../components/Background';
+import HeaderDashboard from '../components/HeaderDashboard';
+import Button from '../components/Button';
+import { getQuizData } from '../api/userAPI';
+import CardListQuiz from '../components/CardListQuiz';
 
-export default function Dashboard({ navigation }) {
+const DashboardAdmin = ({ navigation }) => {
+  const [quizData, setQuizData] = useState([]);
+
+  useEffect(() => {
+    const fetchQuizData = async () => {
+      try {
+        const data = await getQuizData();
+        setQuizData(data);
+      } catch (error) {
+        console.error('Error fetching quiz data:', error);
+      }
+    };
+
+    fetchQuizData();
+  }, []);
+
   return (
     <Background>
-      <Header>Let’s start</Header>
-      <Paragraph>
-        Your amazing app starts here. Open you favorite code editor and start
-        editing this project.
-      </Paragraph>
+      <HeaderDashboard>List Quiz</HeaderDashboard>
+      {quizData.map((quiz) => (
+        <CardListQuiz
+          key={quiz.ID}
+          title={quiz.Title}
+          description={quiz.Description}
+          startedAt={quiz.StartedAt}
+          finishedAt={quiz.FinishedAt}
+        />
+      ))}
       <Button
         mode="outlined"
         onPress={() =>
@@ -24,5 +45,7 @@ export default function Dashboard({ navigation }) {
         Logout
       </Button>
     </Background>
-  )
-}
+  );
+};
+
+export default DashboardAdmin;
