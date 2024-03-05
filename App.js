@@ -8,6 +8,7 @@ import {
   LoginScreen,
   RegisterScreen,
   Dashboard,
+  StartQuiz
 } from './src/screens'
 
 const Stack = createStackNavigator()
@@ -26,6 +27,7 @@ export default function App() {
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
           <Stack.Screen name="Dashboard" component={Dashboard} />
+          <Stack.Screen name="StartQuiz" component={StartQuiz} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

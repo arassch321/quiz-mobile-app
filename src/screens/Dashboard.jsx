@@ -25,17 +25,30 @@ const DashboardAdmin = ({ navigation }) => {
     fetchQuizData();
   }, []);
 
+  // Fungsi untuk menavigasi ke layar StartQuiz dengan parameter quizId
+  const handleStartQuiz = (quizId) => {
+    navigation.navigate('StartQuiz', { quizId });
+  };
+
   return (
     <Background>
       <HeaderDashboard>List Quiz</HeaderDashboard>
       {quizData.map((quiz) => (
-        <CardListQuiz
-          key={quiz.ID}
-          title={quiz.Title}
-          description={quiz.Description}
-          startedAt={quiz.StartedAt}
-          finishedAt={quiz.FinishedAt}
-        />
+        <React.Fragment key={quiz.ID}>
+          <CardListQuiz
+            title={quiz.Title}
+            description={quiz.Description}
+            startedAt={quiz.StartedAt}
+            finishedAt={quiz.FinishedAt}
+          />
+          <Button
+            mode="contained"
+            onPress={() => handleStartQuiz(quiz.ID)}
+            style={{ marginTop: 10 }}
+          >
+            Start Quiz
+          </Button>
+        </React.Fragment>
       ))}
       <Button
         mode="outlined"
@@ -45,6 +58,7 @@ const DashboardAdmin = ({ navigation }) => {
             routes: [{ name: 'StartScreen' }],
           })
         }
+        style={{ marginTop: 20 }}
       >
         Logout
       </Button>

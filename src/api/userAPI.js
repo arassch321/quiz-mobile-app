@@ -50,3 +50,27 @@ export const postLogin = async (email, password) => {
     throw error;
   }
 };
+
+export const getQuestionData = async (quizId) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await fetch(`${BASE_URL}/api/question/questions/${quizId}`, {
+        method: 'GET',
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+        });
+
+        if (!response.ok) {
+        throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        return data.questions;
+    }
+    catch (error) {
+        console.error('Error fetching question data:', error);
+        throw error;
+    }
+};
