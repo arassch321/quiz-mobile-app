@@ -4,6 +4,7 @@ import HeaderDashboard from '../components/HeaderDashboard';
 import Button from '../components/Button';
 import { getQuizData } from '../api/userAPI';
 import CardListQuiz from '../components/CardListQuiz';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DashboardAdmin = ({ navigation }) => {
   const [quizData, setQuizData] = useState([]);
@@ -11,7 +12,10 @@ const DashboardAdmin = ({ navigation }) => {
   useEffect(() => {
     const fetchQuizData = async () => {
       try {
-        const data = await getQuizData();
+        // Mengambil token dari AsyncStorage
+        const token = await AsyncStorage.getItem('token');
+        // Memanggil getQuizData dengan token yang diperoleh
+        const data = await getQuizData(token);
         setQuizData(data);
       } catch (error) {
         console.error('Error fetching quiz data:', error);
