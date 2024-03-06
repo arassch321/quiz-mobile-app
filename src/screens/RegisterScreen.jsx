@@ -10,13 +10,14 @@ import { theme } from '../core/theme'
 import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
 import { nameValidator } from '../helpers/nameValidator'
+import { postRegister } from '../api/userAPI'
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState({ value: '', error: '' })
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
 
-  const onSignUpPressed = () => {
+  const onSignUpPressed = async () => {
     const nameError = nameValidator(name.value)
     const emailError = emailValidator(email.value)
     const passwordError = passwordValidator(password.value)
@@ -26,10 +27,24 @@ export default function RegisterScreen({ navigation }) {
       setPassword({ ...password, error: passwordError })
       return
     }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Dashboard' }],
-    })
+
+    try {
+      const response = await postRegister(name.value, email.value, password.value);
+      // Check if registration was successful
+      if (response && response.success) {
+        // Navigate to Dashboard after successful registration
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Dashboard' }],
+        });
+      } else {
+        // Handle registration failure
+        console.error('Registration failed:', response.error);
+      }
+    } catch (error) {
+      console.error('Error registering:', error);
+      // Handle registration error
+    }
   }
 
   return (

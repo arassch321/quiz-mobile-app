@@ -51,6 +51,30 @@ export const postLogin = async (email, password) => {
   }
 };
 
+export const postRegister = async (username, email, password) => {
+    try {
+        const response = await fetch(`${BASE_URL}/api/user/register`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, email, password }),
+        });
+    
+        if (!response.ok) {
+        throw new Error('Network response was not ok');
+        }
+    
+        const data = await response.json();
+        // console.log('Register response:', data);
+    
+        return data;
+    } catch (error) {
+        console.error('Error registering:', error);
+        throw error;
+    }
+    }
+
 export const getQuestionData = async (quizId) => {
     try {
         const token = await AsyncStorage.getItem('token');
@@ -71,6 +95,31 @@ export const getQuestionData = async (quizId) => {
     }
     catch (error) {
         console.error('Error fetching question data:', error);
+        throw error;
+    }
+};
+
+export const postQuizResult = async (quizId, answers) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await fetch(`${BASE_URL}/api/submit-answer/quizzes/${quizId}/submit-answers`, {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ questionID, answer }),
+        });
+
+        if (!response.ok) {
+        throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        return data;
+    }
+    catch (error) {
+        console.error('Error submitting quiz:', error);
         throw error;
     }
 };

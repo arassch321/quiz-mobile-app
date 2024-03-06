@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import Background from "../components/Background";
 import CardQuestionQuiz from "../components/CardQuestionQuiz";
 import { getQuestionData } from "../api/userAPI";
+import BackButton from "../components/BackButton";
+import { theme } from "../core/theme";
 
-const StartQuiz = ({ route }) => {
+const StartQuiz = ({ route, navigation }) => {
   const [questions, setQuestions] = useState([]);
   const { quizId } = route.params;
 
@@ -12,7 +14,12 @@ const StartQuiz = ({ route }) => {
     const fetchQuestionData = async () => {
       try {
         const data = await getQuestionData(quizId);
-        setQuestions(data);
+        // Initialize selectedOption to null for each question
+        const questionsWithSelection = data.map(question => ({
+          ...question,
+          selectedOption: null
+        }));
+        setQuestions(questionsWithSelection);
       } catch (error) {
         console.error("Error fetching question data:", error);
         // Handle error, such as displaying an error message to the user
@@ -28,39 +35,66 @@ const StartQuiz = ({ route }) => {
     }
   }, [quizId]); // Ensure useEffect runs when quizId changes
 
-  const handleOptionSelect = (option) => {
+  const handleOptionSelect = (option, questionIndex) => {
     // Handle option selection
     console.log("Selected option:", option);
+    const updatedQuestions = [...questions];
+    updatedQuestions[questionIndex].selectedOption = option;
+    setQuestions(updatedQuestions);
+  };
+
+  const handleSubmitQuiz = () => {
+    // Logic to handle submitting quiz
+    console.log("Quiz submitted!");
+    // You can send the selected options to the server for evaluation
   };
 
   return (
     <Background>
-      <View style={styles.container}>
-        <Text style={styles.title}>Quiz Questions</Text>
+      <BackButton goBack={navigation.goBack} />
+      <Text style={styles.title}>Quiz Questions</Text>
+      <ScrollView contentContainerStyle={styles.container}>
         {questions.map((question, index) => (
           <CardQuestionQuiz
             key={index}
             question={question.Question}
             options={question.Options}
-            onSelectOption={handleOptionSelect}
+            onSelectOption={(option) => handleOptionSelect(option, index)}
+            selectedOption={question.selectedOption}
           />
         ))}
-      </View>
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmitQuiz}>
+          <Text style={styles.submitButtonText}>Submit Quiz</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </Background>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 20,
+    paddingBottom: 310,// Adjust paddingBottom to ensure the last question is fully visible
   },
   title: {
-    fontSize: 24,
+    fontSize: 25,
+    color: theme.colors.primary,
     fontWeight: "bold",
-    marginBottom: 20,
+    paddingVertical: 13,
+    marginTop: 25,
+  },
+  submitButton: {
+    backgroundColor: theme.colors.primary,
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 20,
+    alignSelf: "center",
+  },
+  submitButtonText: {
+    fontSize: 18,
+    color: theme.colors.surface,
+    fontWeight: "bold",
   },
 });
 

@@ -1,9 +1,10 @@
+// CardQuestionQuiz.jsx
 import React from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { theme } from "../core/theme";
 
 const CardQuestionQuiz = (props) => {
-  const { question, options, onSelectOption } = props;
+  const { question, options, onSelectOption, selectedOption } = props;
 
   // Parse options string to object
   const parsedOptions = JSON.parse(options);
@@ -14,10 +15,13 @@ const CardQuestionQuiz = (props) => {
       {Object.entries(parsedOptions).map(([key, value]) => (
         <TouchableOpacity
           key={key}
-          style={styles.option}
+          style={[
+            styles.option,
+            selectedOption === key && styles.selectedOption,
+          ]}
           onPress={() => onSelectOption(key)}
         >
-          <Text>{value}</Text>
+          <Text style={[styles.optionText, selectedOption === key && styles.selectedOptionText]}>{value}</Text>
         </TouchableOpacity>
       ))}
     </View>
@@ -26,7 +30,7 @@ const CardQuestionQuiz = (props) => {
 
 const styles = StyleSheet.create({
   card: {
-    width: "100%",
+    width: "90%",
     marginVertical: 12,
     backgroundColor: theme.colors.surface,
     padding: 20,
@@ -51,6 +55,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.primary,
     borderRadius: 5,
+  },
+  optionText: {
+    color: theme.colors.text, // default text color
+  },
+  selectedOption: {
+    backgroundColor: theme.colors.primary,
+  },
+  selectedOptionText: {
+    color: theme.colors.surface, // change text color when selected
   },
 });
 
