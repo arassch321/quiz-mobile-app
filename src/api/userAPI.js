@@ -98,17 +98,18 @@ export const getQuestionData = async (quizId) => {
         throw error;
     }
 };
-
-export const postQuizResult = async (quizId, answers) => {
+export const postSubmitAnswer = async (quizID, answers) => {
     try {
         const token = await AsyncStorage.getItem('token');
-        const response = await fetch(`${BASE_URL}/api/submit-answer/quizzes/${quizId}/submit-answers`, {
+        console.log(quizID)
+        console.log(answers)
+        const response = await fetch(`${BASE_URL}/api/submit-answer/quizzes/${quizID}/submit-answers`, {
         method: 'POST',
         headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ questionID, answer }),
+        body: JSON.stringify(answers),
         });
 
         if (!response.ok) {
@@ -122,4 +123,4 @@ export const postQuizResult = async (quizId, answers) => {
         console.error('Error submitting quiz:', error);
         throw error;
     }
-};
+}

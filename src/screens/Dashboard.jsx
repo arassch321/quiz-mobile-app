@@ -30,6 +30,16 @@ const DashboardAdmin = ({ navigation }) => {
     navigation.navigate('StartQuiz', { quizId });
   };
 
+  const handleLogout = () => {
+    // Hapus token dari AsyncStorage
+    AsyncStorage.removeItem('token');
+    // Navigasi ke halaman StartScreen
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'StartScreen' }],
+    });
+  }
+
   return (
     <Background>
       <HeaderDashboard>List Quiz</HeaderDashboard>
@@ -52,11 +62,7 @@ const DashboardAdmin = ({ navigation }) => {
       ))}
       <Button
         mode="outlined"
-        onPress={() =>
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'StartScreen' }],
-          })
+        onPress={() => handleLogout()
         }
         style={{ marginTop: 20 }}
       >

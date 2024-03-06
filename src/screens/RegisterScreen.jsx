@@ -35,7 +35,7 @@ export default function RegisterScreen({ navigation }) {
         // Navigate to Dashboard after successful registration
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Dashboard' }],
+          routes: [{ name: 'LoginScreen' }],
         });
       } else {
         // Handle registration failure

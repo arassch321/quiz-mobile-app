@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from "react-native";
 import Background from "../components/Background";
 import CardQuestionQuiz from "../components/CardQuestionQuiz";
-import { getQuestionData } from "../api/userAPI";
+import { getQuestionData, postSubmitAnswer } from "../api/userAPI";
 import BackButton from "../components/BackButton";
 import { theme } from "../core/theme";
 
@@ -43,10 +43,33 @@ const StartQuiz = ({ route, navigation }) => {
     setQuestions(updatedQuestions);
   };
 
-  const handleSubmitQuiz = () => {
-    // Logic to handle submitting quiz
-    console.log("Quiz submitted!");
-    // You can send the selected options to the server for evaluation
+  const handleSubmitQuiz = async () => {
+    // Filter out questions without selected options
+    const answeredQuestions = questions.filter(question => question.selectedOption !== null);
+
+    // Check if all questions are answered
+    if (answeredQuestions.length !== questions.length) {
+      Alert.alert("Incomplete Quiz", "Please answer all questions before submitting.");
+      return;
+    }
+
+    try {
+      // Prepare data for submission
+      const answers = answeredQuestions.map(question => ({
+        questionID: question.ID,
+        answer: question.selectedOption
+      }));
+      
+      answers.sort((a, b) => a.questionID - b.questionID);
+
+      // Send answers to the server
+      await postSubmitAnswer(quizId, answers);
+      Alert.alert("Quiz Submitted", "Your quiz has been submitted successfully.");
+      // You can navigate to another screen or perform any other action upon successful submission
+    } catch (error) {
+      console.error("Error submitting quiz:", error);
+      Alert.alert("Info", "Your already submitted this quiz.");
+    }
   };
 
   return (
